@@ -1,0 +1,86 @@
+:root{
+    --putih: #ffffff;
+    --hitam: black;
+    --coklat:#747272;
+    --abu: #777;
+    --abuGelap: #444;
+}
+
+*{
+    margin: 0; padding: 0;
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    text-transform: capitalize;
+    transition: .2s linear;
+}
+
+.container{
+    padding: 15px 9%;
+    padding-bottom: 100px;
+}
+
+.container .heading{
+    text-align: center;
+    padding-bottom: 30px;
+    color: var(--hitam);
+    text-shadow: 0 10px 23px var(--abuGelap);
+    font-size: 40px;
+}
+
+.container .box-container{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    grid-gap: 50px;   
+}
+
+.container .box-container .box{
+    box-shadow: 0 5px 10px var(--hitam);
+    background: var(--putih);
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.container .box-container .box img{
+    height: 150px;
+    border-radius: 5px;
+}
+
+.container .box-container .box h3{
+    color: var(--abuGelap);
+    font-size: 22px;
+    padding: 10px 0;
+}
+
+.container .box-container .box p{
+    color: var(--abu);
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.container .box-container .box .btn{
+    margin-top: 10px;
+    display: inline-block;
+    background: var(--abuGelap);
+    color: var(--putih);
+    font-size: 17px;
+    padding: 8px 25px;
+}
+
+.container .box-container .box:hover{
+    box-shadow: 0 10px 15px var(--hitam);
+    transform: scale(1.03);
+}
+
+.container .box-container .box .btn:hover{
+    transform: scale(1.09);
+}
+
+@media (max-width:720px){
+    .container{
+        padding: 50px;
+    }
+}
+

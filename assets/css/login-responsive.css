@@ -1,0 +1,113 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    background-color: rgb(221, 220, 220);
+  }
+  h1 {
+    text-align: center;
+    font-family: sans-serif;
+  }
+  
+  .content {
+    background-color: white;
+    font-weight: bold;
+    padding: 10px;
+    padding-bottom: 20px;
+    width: 50%;
+    margin: auto;
+    border-radius: 5px;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5);
+  }
+  
+  
+  .login-atas-atas{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  
+  .login-bawah {
+    display: flex;
+  }
+  
+  .login-bawah-kiri {
+    margin-top: 10px;
+    width: 100%;
+    margin-left: 20px;
+  }
+  
+  input {
+    width: 85%;
+    padding: 8px;
+    margin: 2px 0;
+    border: 1px solid #746c6c;
+    border-radius: 5px;
+  }
+  
+  button {
+    width: 45%;
+    background-color: aqua;
+    font-size: large;
+    border-radius: 5px;
+    padding: 5px;
+    border: none;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  .login-bawah-kanan {
+    margin-top: 25px;
+  }
+  
+  video {
+    border-radius: 10px;
+  }
+  
+  p {
+    background-color: aqua;
+    margin: 0%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 15px;
+  }
+  
+  p::before {
+    content: "* ";
+    color: red;
+  }
+  label::after {
+    content: " *";
+    color: red;
+  }
+  
+  @media screen and (max-width: 1200px) {
+    .content {
+      width: 80%;
+    }
+  }
+  
+  @media screen and (max-width: 800px) {
+    .content {
+      width: 100%;
+    }
+    .login-bawah {
+      display: flex;
+      flex-wrap: wrap-reverse;
+    }
+    input{
+      width: 95%;
+    }
+    button{
+      width: 95%;
+      margin-bottom: 30px;
+    }
+    .login-bawah > .login-bawah-kanan{
+      justify-content: center;
+      align-items: center;
+      padding-top: 20px;
+      margin: auto;
+    }
+  }
+  
