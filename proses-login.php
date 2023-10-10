@@ -7,7 +7,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $passInput = $_POST['password'];
 
     if ($userAkun === $userInput and $passAkun === $passInput) {
-        $_SESSION['login'] = $username;
         header('Location: dashboard.php');
         exit();
     } else {
