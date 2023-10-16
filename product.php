@@ -71,10 +71,7 @@ $produk = array(
           <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="#" class="nav-link">Home</a>
-        </li>
-        <li class="nav-item d-none d-sm-inline-block">
-          <a href="#" class="nav-link">Contact</a>
+          <a href="dashboard.php" class="nav-link">Home</a>
         </li>
       </ul>
 
@@ -109,7 +106,7 @@ $produk = array(
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <!-- Brand Logo -->
-      <a href="#" class="brand-link">
+      <a href="dashboard.php" class="brand-link">
         <img src="assets/images/pp.jpeg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
           style="opacity: 0.8" />
         <span class="brand-text font-weight-light">Akmal Ryandi</span>
@@ -135,21 +132,23 @@ $produk = array(
             <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="product.php" class="nav-link active">
                 <i class="nav-icon fas fa-th"></i>
                 <p>
-                  Product
-                  <span class="right badge badge-danger">New</span>
+                  Galery
                 </p>
               </a>
             </li>
             <li class="nav-header">EXAMPLES</li>
-            <!-- <li class="nav-item">
-                <a href="pages/galery.html" class="nav-link">
-                  <i class="nav-icon far fa-image"></i>
-                  <p>Gallery</p>
-                </a>
-              </li> -->
+            <li class="nav-item">
+              <a href="pos-shop/produk.php" class="nav-link">
+                <i class="bi bi-bag"></i>
+                <p>
+                  Pos Shop
+                  <span class="right badge badge-danger">New</span>
+                </p>
+              </a>
+            </li>
           </ul>
         </nav>
         <!-- /.sidebar-menu -->
@@ -236,7 +235,7 @@ $produk = array(
   <script src="plugins/chart.js/Chart.min.js"></script>
 
   <!-- AdminLTE for demo purposes -->
-  <script src="dist/js/demo.js"></script>
+  <!-- <script src="dist/js/demo.js"></script> -->
   <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
   <script src="dist/js/pages/dashboard2.js"></script>
 </body>
