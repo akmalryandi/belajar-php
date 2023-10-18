@@ -13,19 +13,36 @@ if (isset($_POST['submit'])) {
     $kode_produk = $_POST['kode_produk'];
     $kategori = $_POST['kategori'];
 
-    $sql = "INSERT INTO products(image, product_name, description, price, stock, product_code, category_id) 
-                VALUES('$gambar','$nama_produk','$deskripsi_produk','$harga','$stok','$kode_produk','$kategori')";
-    $result = mysqli_query($con, $sql);
-
-    if (!$result) {
-        die(mysqli_error($con));
+    if (empty($kode_produk)) {
+        echo "Kode produk tidak boleh kosong.";
     } else {
-        header('location:produk.php');
+        // Periksa apakah kode produk sudah ada dalam database
+        $query = "SELECT id FROM products WHERE product_code = '$kode_produk'";
+        $resultk = mysqli_query($con, $query);
+
+        if (mysqli_num_rows($resultk) > 0) {
+            $error_message = "Kode produk sudah ada.";
+        } else {
+            // Lakukan operasi penambahan data ke dalam database
+            $sql = "INSERT INTO products(image, product_name, description, price, stock, product_code, category_id) 
+                VALUES('$gambar','$nama_produk','$deskripsi_produk','$harga','$stok','$kode_produk','$kategori')";
+            $result = mysqli_query($con, $sql);
+
+            if (!$result) {
+                die(mysqli_error($con));
+            } else {
+                header('location:produk.php');
+            }
+        }
+    }
+    // Tampilkan pesan Error pada Kode Produk
+    if (isset($error_message)) {
+        echo "<script>alert('$error_message');</script>";
     }
 }
 
 $sql_categories = "SELECT * FROM product_categories";
-$categories_result = mysqli_query($con,$sql_categories);
+$categories_result = mysqli_query($con, $sql_categories);
 ?>
 
 
@@ -203,7 +220,7 @@ $categories_result = mysqli_query($con,$sql_categories);
                         <div class="col-md-6 mb-3">
                             <label for="kategori" class="form-label">Kategori</label>
                             <select class="form-select" id="kategori" name="kategori" required>
-                            <option selected>Pilih Kategori</option>
+                                <option selected>Pilih Kategori</option>
                                 <?php
                                 while ($category = $categories_result->fetch_assoc()) {
                                     echo "<option value='" . $category["id"] . "'>" . $category["category_name"] . "</option>";

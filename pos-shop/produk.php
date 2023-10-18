@@ -1,10 +1,9 @@
 <?php
 include("../db/connect.php");
-// $sql = "SELECT id, image, product_name, description, price, stock, product_code, category_id 
-//         FROM products";
 $sql = "SELECT p.id, p.image, p.product_name, p.description, p.price, p.stock, p.product_code, c.category_name 
         FROM products p
-        JOIN product_categories c ON p.category_id = c.id;";
+        JOIN product_categories c ON p.category_id = c.id
+        ORDER BY p.id ASC;";
 
 $read = mysqli_query($con, $sql);
 ?>
@@ -170,13 +169,13 @@ $read = mysqli_query($con, $sql);
                                 <thead>
                                     <tr class="text-center">
                                         <th scope="col">No</th>
-                                        <th scope="col">Kategori</th>
+                                        <th scope="col">Picture</th>
                                         <th scope="col">Nama</th>
                                         <th scope="col">Deskripsi</th>
                                         <th scope="col">Harga</th>
                                         <th scope="col">Stok</th>
                                         <th scope="col">Kode Produk</th>
-                                        <th scope="col">Picture</th>
+                                        <th scope="col">Kategori</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
@@ -190,13 +189,13 @@ $read = mysqli_query($con, $sql);
                                         while ($data = mysqli_fetch_array($read)) {
                                             echo '<tr class="text-center">';
                                             echo '<th>' . $nomor . '</th>';
-                                            echo '<td>' . $data['category_name'] . '</td>';
+                                            echo '<td><img class="rounded" alt="' . $data['image'] . '" src="../assets/images/pos-shop/' . $data['image'] . '" width="100"></td>';
                                             echo '<td>' . $data['product_name'] . '</td>';
                                             echo '<td>' . $data['description'] . '</td>';
                                             echo '<td>' . $data['price'] . '</td>';
                                             echo '<td>' . $data['stock'] . '</td>';
                                             echo '<td>' . $data['product_code'] . '</td>';
-                                            echo '<td><img class="rounded" alt="' . $data['image'] . '" src="../assets/images/pos-shop/' . $data['image'] . '" width="100"></td>';
+                                            echo '<td>' . $data['category_name'] . '</td>';
                                             echo '<td><a href="editproduk.php?updateid=' . $data['id'] . '">
                                 <button class="btn btn-outline-light m-2"><i class="bi bi-pencil-square"></i></button></a>
 

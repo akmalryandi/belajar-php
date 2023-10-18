@@ -3,16 +3,16 @@ include("../db/connect.php");
 
 $id = $_GET['updateid'];
 if (isset($_POST['submit'])) {
-    
+
     $sql2 = "SELECT * FROM products WHERE id=$id";
-        $result2 = mysqli_query($con,$sql2);
-        $data = mysqli_fetch_assoc($result2);
+    $result2 = mysqli_query($con, $sql2);
+    $data = mysqli_fetch_assoc($result2);
 
     if ($_FILES['gambar']['name'] != "") {
         $gambar = $_FILES['gambar']['name'];
-        unlink("../assets/images/pos-shop/".$data['image']);
-        move_uploaded_file($_FILES['gambar']['tmp_name'], "../assets/images/pos-shop/".$gambar);
-    }else {
+        unlink("../assets/images/pos-shop/" . $data['image']);
+        move_uploaded_file($_FILES['gambar']['tmp_name'], "../assets/images/pos-shop/" . $gambar);
+    } else {
         $gambar = $data['image'];
     }
 
@@ -23,25 +23,27 @@ if (isset($_POST['submit'])) {
     $stok = $_POST['stok'];
     $kode_produk = $_POST['kode_produk'];
     $kategori = $_POST['category_id'];
+   
+            $sql = "UPDATE products SET image='$gambar', product_name='$nama_produk', description='$deskripsi_produk', price='$harga', 
+                    stock='$stok', product_code='$kode_produk', category_id='$kategori'
+                    where id=$id";
+            $result = mysqli_query($con, $sql);
 
-    $sql = "UPDATE products SET image='$gambar', product_name='$nama_produk', description='$deskripsi_produk', price='$harga', stock='$stok', product_code='$kode_produk', category_id='$kategori'
-            where id=$id";
-    $result = mysqli_query($con, $sql);
-
-    if (!$result) {
-        die(mysqli_error($con));
-    } else {
-        header('location:produk.php');
-    }
+            if (!$result) {
+                die(mysqli_error($con));
+            } else {
+                header('location:produk.php');
+            }
+        
 }
 
 
-    $sqll = "SELECT p.id, p.image, p.product_name, p.description, p.price, p.stock, p.product_code, c.category_name
+$sqll = "SELECT p.id, p.image, p.product_name, p.description, p.price, p.stock, p.product_code, c.category_name
         FROM products p
         JOIN product_categories c ON p.category_id = c.id
         WHERE p.id=$id";
-    $hasil = mysqli_query($con, $sqll);
-    $baris = mysqli_fetch_assoc($hasil);
+$hasil = mysqli_query($con, $sqll);
+$baris = mysqli_fetch_assoc($hasil);
 
 $sql_kategori = "SELECT * FROM product_categories";
 $hasil_kategori = mysqli_query($con, $sql_kategori);
@@ -206,27 +208,30 @@ $hasil_kategori = mysqli_query($con, $sql_kategori);
                     <form class="row g-3" method="post" enctype="multipart/form-data">
                         <div class="col-md-6 mb-3">
                             <label for="nama" class="form-label">Nama Produk</label>
-                            <input type="text" required class="form-control" id="nama" name="nama" value="<?php echo $baris['product_name']; ?>">
+                            <input type="text" required class="form-control" id="nama" name="nama"
+                                value="<?php echo $baris['product_name']; ?>">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="harga" class="form-label">Harga</label>
-                            <input type="number" required class="form-control" id="harga" name="harga" value="<?php echo $baris['price']; ?>">
+                            <input type="number" required class="form-control" id="harga" name="harga"
+                                value="<?php echo $baris['price']; ?>">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="stok" class="form-label">Stok</label>
-                            <input type="number" required class="form-control" id="stok" name="stok" value="<?php echo $baris['stock']; ?>">
+                            <input type="number" required class="form-control" id="stok" name="stok"
+                                value="<?php echo $baris['stock']; ?>">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="kode_produk" class="form-label">Kode Produk</label>
-                            <input type="text" required class="form-control" id="kode_produk" name="kode_produk" value="<?php echo $baris['product_code']; ?>">
+                            <input type="text" required class="form-control" id="kode_produk" name="kode_produk"
+                                value="<?php echo $baris['product_code']; ?>">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="kategori" class="form-label">Kategori</label>
                             <select class="form-select" id="category_id" name="category_id" required>
-                                <!-- REVISI -->
                                 <?php
                                 while ($category = $hasil_kategori->fetch_assoc()) {
-                                    $selected = ($category["id"] == $baris["category_id"]) ? "selected" : "";
+                                    $selected = ($category["updateid"] == $baris["category_id"]) ? "selected" : "";
                                     echo "<option value='" . $category["id"] . "' $selected>" . $category["category_name"] . "</option>";
                                 }
                                 ?>
@@ -234,7 +239,8 @@ $hasil_kategori = mysqli_query($con, $sql_kategori);
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="deskripsi" class="form-label">Deskripsi</label>
-                            <textarea class="form-control" required id="deskripsi" rows="3" name="deskripsi"><?php echo $baris['description']; ?></textarea>
+                            <textarea class="form-control" required id="deskripsi" rows="3"
+                                name="deskripsi"><?php echo $baris['description']; ?></textarea>
                         </div>
                         <div class="col-md-12 mb-3">
                             <label for="gambar">Pilih gambar</label>
