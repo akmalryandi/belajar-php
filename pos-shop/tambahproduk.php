@@ -203,19 +203,19 @@ $categories_result = mysqli_query($con, $sql_categories);
                     <form class="row g-3" method="post" enctype="multipart/form-data">
                         <div class="col-md-6 mb-3">
                             <label for="nama" class="form-label">Nama Produk</label>
-                            <input type="text" required class="form-control" id="nama" name="nama">
+                            <input type="text" required class="form-control" id="nama" name="nama" autocomplete="off">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="harga" class="form-label">Harga</label>
-                            <input type="number" required class="form-control" id="harga" name="harga">
+                            <input type="number" required class="form-control" id="harga" name="harga" autocomplete="off">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="stok" class="form-label">Stok</label>
-                            <input type="number" required class="form-control" id="stok" name="stok">
+                            <input type="number" required class="form-control" id="stok" name="stok" autocomplete="off">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="kode_produk" class="form-label">Kode Produk</label>
-                            <input type="text" required class="form-control" id="kode_produk" name="kode_produk">
+                            <input type="text" required class="form-control" id="kode_produk" name="kode_produk" autocomplete="off">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="kategori" class="form-label">Kategori</label>

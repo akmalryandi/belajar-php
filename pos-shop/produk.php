@@ -1,11 +1,38 @@
 <?php
 include("../db/connect.php");
+
+
+// Pagination
+$dataHalaman = 3;
+$data = mysqli_num_rows(mysqli_query($con, "SELECT * FROM products"));
+$halaman = ceil($data / $dataHalaman);
+$aktifHalaman = (isset($_GET['page'])) ? $_GET['page'] : 1;
+$awalData = ($dataHalaman * $aktifHalaman) - $dataHalaman;
+
+
 $sql = "SELECT p.id, p.image, p.product_name, p.description, p.price, p.stock, p.product_code, c.category_name 
         FROM products p
         JOIN product_categories c ON p.category_id = c.id
-        ORDER BY p.id ASC;";
-
+        ORDER BY p.id ASC
+        LIMIT $awalData, $dataHalaman";
 $read = mysqli_query($con, $sql);
+
+
+// FITUR SEARCH
+if (isset($_POST['cari'])) {
+    $cari = $_POST['nyari'];
+
+    $sql = "SELECT p.id, p.image, p.product_name, p.description, p.price, p.stock, p.product_code, c.category_name 
+            FROM products p
+            JOIN product_categories c ON p.category_id = c.id 
+            where 
+            p.product_name like '%$cari%' or
+            p.description like '%$cari%' or
+            c.category_name like '%$cari%'
+            ORDER BY p.id ASC
+            LIMIT $awalData, $dataHalaman";
+    $read = mysqli_query($con, $sql);
+}
 ?>
 
 
@@ -22,6 +49,8 @@ $read = mysqli_query($con, $sql);
     <link rel="stylesheet" href="../assets/css/produk.css" />
     <!-- Icon -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback" />
@@ -160,15 +189,27 @@ $read = mysqli_query($con, $sql);
                 <div class="container-fluid">
                     <!-- ISI PRODUK -->
                     <div class="container">
+                        <form action="produk.php" method="post">
+                            <div class="d-flex bd-highlight">
+                                <div class="me-auto p-1 bd-highlight">
+                                    <a href="tambahproduk.php" type="button" class="btn btn-outline-light"><i
+                                            class="bi bi-plus-lg"></i></a>
+                                </div>
+                                <div class="p-1 bd-highlight">
+                                    <input type="text" class="form-control" id="search" name="nyari"
+                                        placeholder="Search" autocomplete="off">
+                                </div>
+                                <div class="p-1 bd-highlight">
+                                    <button type="submit" name="cari" class="btn btn-secondary"><i
+                                            class="bi bi-search"></i></button>
+                                </div>
+                            </div>
+                        </form>
 
-                        <a href="tambahproduk.php" type="button" class="btn btn-outline-light"><i
-                                class="bi bi-plus-lg"></i></a>
                         <div class="table-responsive-sm row p-3">
-
                             <table class="table table-respon2">
                                 <thead>
                                     <tr class="text-center">
-                                        <th scope="col">No</th>
                                         <th scope="col">Picture</th>
                                         <th scope="col">Nama</th>
                                         <th scope="col">Deskripsi</th>
@@ -185,10 +226,8 @@ $read = mysqli_query($con, $sql);
                                         echo "Gagal Tampil" . mysqli_error($con);
                                         die;
                                     } else {
-                                        $nomor = 1;
                                         while ($data = mysqli_fetch_array($read)) {
                                             echo '<tr class="text-center">';
-                                            echo '<th>' . $nomor . '</th>';
                                             echo '<td><img class="rounded" alt="' . $data['image'] . '" src="../assets/images/pos-shop/' . $data['image'] . '" width="100"></td>';
                                             echo '<td>' . $data['product_name'] . '</td>';
                                             echo '<td>' . $data['description'] . '</td>';
@@ -202,13 +241,43 @@ $read = mysqli_query($con, $sql);
                                 <a href="deleteproduk.php?deleteid=' . $data['id'] . '">
                                 <button class="btn btn-outline-danger" onclick="return confirm(\'Apakah Anda yakin ingin menghapus data ini?\')"><i class="bi bi-trash3-fill"></i></button></a></td>';
                                             echo '</tr>';
-                                            $nomor++;
                                         }
                                     }
                                     ?>
-
                                 </tbody>
                             </table>
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-end">
+                                    <?php if ($aktifHalaman > 1): ?>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=<?= $aktifHalaman - 1 ?>"
+                                                aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
+
+                                    <?php for ($i = 1; $i <= $halaman; $i++): ?>
+                                        <?php if ($i == $aktifHalaman): ?>
+                                            <li class="page-item active"><a class="page-link" href="?page=<?= $i; ?>">
+                                                    <?= $i; ?>
+                                                </a></li>
+                                        <?php else: ?>
+                                            <li class="page-item"><a class="page-link" href="?page=<?= $i; ?>">
+                                                    <?= $i; ?>
+                                                </a></li>
+                                        <?php endif; ?>
+                                    <?php endfor; ?>
+
+                                    <?php if ($aktifHalaman < $halaman): ?>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=<?= $aktifHalaman + 1 ?>" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                     <!-- /.row -->

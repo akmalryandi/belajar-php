@@ -23,18 +23,18 @@ if (isset($_POST['submit'])) {
     $stok = $_POST['stok'];
     $kode_produk = $_POST['kode_produk'];
     $kategori = $_POST['category_id'];
-   
-            $sql = "UPDATE products SET image='$gambar', product_name='$nama_produk', description='$deskripsi_produk', price='$harga', 
+
+    $sql = "UPDATE products SET image='$gambar', product_name='$nama_produk', description='$deskripsi_produk', price='$harga', 
                     stock='$stok', product_code='$kode_produk', category_id='$kategori'
                     where id=$id";
-            $result = mysqli_query($con, $sql);
+    $result = mysqli_query($con, $sql);
 
-            if (!$result) {
-                die(mysqli_error($con));
-            } else {
-                header('location:produk.php');
-            }
-        
+    if (!$result) {
+        die(mysqli_error($con));
+    } else {
+        header('location:produk.php');
+    }
+
 }
 
 
