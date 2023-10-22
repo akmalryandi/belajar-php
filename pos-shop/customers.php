@@ -1,53 +1,38 @@
 <?php
 include("../db/connect.php");
 
-$id = $_GET['updateid'];
-if (isset($_POST['submit'])) {
 
-    $sql2 = "SELECT * FROM products WHERE id=$id";
-    $result2 = mysqli_query($con, $sql2);
-    $data = mysqli_fetch_assoc($result2);
-
-    if ($_FILES['gambar']['name'] != "") {
-        $gambar = $_FILES['gambar']['name'];
-        unlink("../assets/images/pos-shop/" . $data['image']);
-        move_uploaded_file($_FILES['gambar']['tmp_name'], "../assets/images/pos-shop/" . $gambar);
-    } else {
-        $gambar = $data['image'];
-    }
+// Pagination
+$dataHalaman = 3;
+$data = mysqli_num_rows(mysqli_query($con, "SELECT * FROM customers"));
+$halaman = ceil($data / $dataHalaman);
+$aktifHalaman = (isset($_GET['page'])) ? $_GET['page'] : 1;
+$awalData = ($dataHalaman * $aktifHalaman) - $dataHalaman;
 
 
-    $nama_produk = $_POST['nama'];
-    $deskripsi_produk = $_POST['deskripsi'];
-    $harga = $_POST['harga'];
-    $stok = $_POST['stok'];
-    $kode_produk = $_POST['kode_produk'];
-    $kategori = $_POST['category_id'];
+$sql = "SELECT * 
+        FROM customers
+        ORDER BY id ASC
+        LIMIT $awalData, $dataHalaman";
+$read = mysqli_query($con, $sql);
 
-    $sql = "UPDATE products SET image='$gambar', product_name='$nama_produk', description='$deskripsi_produk', price='$harga', 
-                    stock='$stok', product_code='$kode_produk', category_id='$kategori'
-                    where id=$id";
-    $result = mysqli_query($con, $sql);
 
-    if (!$result) {
-        die(mysqli_error($con));
-    } else {
-        header('location:produk.php');
-    }
+// FITUR SEARCH
+if (isset($_POST['cari'])) {
+    $cari = $_POST['nyari'];
 
+    $sql = "SELECT *
+            FROM customers
+            where 
+            code like '%$cari%' or
+            name like '%$cari%' or
+            phone_number like '%$cari%' or
+            email like '%$cari%' or
+            address like '%$cari%'
+            ORDER BY p.id ASC
+            LIMIT $awalData, $dataHalaman";
+    $read = mysqli_query($con, $sql);
 }
-
-
-$sqll = "SELECT p.id, p.image, p.product_name, p.description, p.price, p.stock, p.product_code, c.category_name
-        FROM products p
-        JOIN product_categories c ON p.category_id = c.id
-        WHERE p.id=$id";
-$hasil = mysqli_query($con, $sqll);
-$baris = mysqli_fetch_assoc($hasil);
-
-$sql_kategori = "SELECT * FROM product_categories";
-$hasil_kategori = mysqli_query($con, $sql_kategori);
-
 ?>
 
 
@@ -58,15 +43,14 @@ $hasil_kategori = mysqli_query($con, $sql_kategori);
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Product</title>
+    <title>Customers</title>
 
     <!-- My CSS -->
     <link rel="stylesheet" href="../assets/css/produk.css" />
-    <!-- CSS Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <!-- Icon -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback" />
@@ -94,10 +78,13 @@ $hasil_kategori = mysqli_query($con, $sql_kategori);
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="../pos-shop/produk.php" class="nav-link active">Product</a>
+                    <a href="../pos-shop/produk.php" class="nav-link">Product</a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="#" class="nav-link">Category</a>
+                    <a href="../pos-shop/customers.php" class="nav-link active">Customers</a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="../pos-shop/vendor.php" class="nav-link">Vendors</a>
                 </li>
             </ul>
 
@@ -191,7 +178,7 @@ $hasil_kategori = mysqli_query($con, $sql_kategori);
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h1 class="m-0">Edit Product</h1>
+                            <h1 class="m-0">Customers</h1>
                         </div>
                     </div>
                     <!-- /.row -->
@@ -202,57 +189,110 @@ $hasil_kategori = mysqli_query($con, $sql_kategori);
 
             <!-- Main content -->
             <section class="content">
-                <div class="container p-5">
-
+                <div class="container-fluid">
                     <!-- ISI PRODUK -->
-                    <form class="row g-3" method="post" enctype="multipart/form-data">
-                        <div class="col-md-6 mb-3">
-                            <label for="nama" class="form-label">Nama Produk</label>
-                            <input type="text" required class="form-control" id="nama" name="nama"
-                                value="<?php echo $baris['product_name']; ?>">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="harga" class="form-label">Harga</label>
-                            <input type="number" required class="form-control" id="harga" name="harga"
-                                value="<?php echo $baris['price']; ?>">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="stok" class="form-label">Stok</label>
-                            <input type="number" required class="form-control" id="stok" name="stok"
-                                value="<?php echo $baris['stock']; ?>">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="kode_produk" class="form-label">Kode Produk</label>
-                            <input type="text" required class="form-control" id="kode_produk" name="kode_produk"
-                                value="<?php echo $baris['product_code']; ?>">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="kategori" class="form-label">Kategori</label>
-                            <select class="form-select" id="category_id" name="category_id" required>
-                                <?php
-                                while ($category = $hasil_kategori->fetch_assoc()) {
-                                    $selected = ($category["updateid"] === $baris["category_id"]) ? "echo selected" : "";
-                                    echo "<option value='" . $category["id"] . "' $selected>" . $category["category_name"] . "</option>";
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="deskripsi" class="form-label">Deskripsi</label>
-                            <textarea class="form-control" required id="deskripsi" rows="3"
-                                name="deskripsi"><?php echo $baris['description']; ?></textarea>
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <label for="gambar">Pilih gambar</label>
-                            <input type="file" class="form-control" name="gambar" id="gambar" accept="image/*">
-                        </div>
+                    <div class="row">
                         <div class="col-12">
-                            <button type="submit" name="submit" class="btn btn-dark">Edit</button>
+                            <div class="card">
+                                <form action="produk.php" method="post">
+                                    <div class="card-header">
+                                        <a href="tambahproduk.php" type="button" class="btn btn-outline-light"><i
+                                                class="bi bi-plus-lg"></i></a>
+                                        <div class="card-tools">
+                                            <div class="input-group input-group-sm" style="width: 150px;">
+                                                <input type="text" name="nyari" class="form-control float-right"
+                                                    placeholder="Search" autocomplete="off">
+
+                                                <div class="input-group-append">
+                                                    <button type="submit" name="cari" class="btn btn-default">
+                                                        <i class="fas fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </form>
+                                <!-- /.card-header -->
+                                <div class="card-body table-responsive p-0">
+                                    <table class="table table-hover text-nowrap">
+                                        <thead>
+                                            <tr class="text-center">
+                                                <th scope="col">Kode</th>
+                                                <th scope="col">Nama</th>
+                                                <th scope="col">No HP</th>
+                                                <th scope="col">Email</th>
+                                                <th scope="col">Alamat</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            if (!$read) {
+                                                echo "Gagal Tampil" . mysqli_error($con);
+                                                die;
+                                            } else {
+                                                while ($data = mysqli_fetch_array($read)) {
+                                                    echo '<tr class="text-center">';
+                                                    echo '<td>' . $data['code'] . '</td>';
+                                                    echo '<td>' . $data['name'] . '</td>';
+                                                    echo '<td>' . $data['phone_number'] . '</td>';
+                                                    echo '<td>' . $data['email'] . '</td>';
+                                                    echo '<td>' . $data['address'] . '</td>';
+                                                    echo '<td><a href="editproduk.php?updateid=' . $data['id'] . '">
+                                <button class="btn btn-outline-light m-2"><i class="bi bi-pencil-square"></i></button></a>
+
+                                <a href="deleteproduk.php?deleteid=' . $data['id'] . '">
+                                <button class="btn btn-outline-danger" onclick="return confirm(\'Apakah Anda yakin ingin menghapus data ini?\')"><i class="bi bi-trash3-fill"></i></button></a></td>';
+                                                    echo '</tr>';
+                                                }
+                                            }
+                                            ?>
+                                        </tbody>
+                                    </table>
+
+                                    <!-- Pagination -->
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="p-2 pagination justify-content-end">
+                                            <?php if ($aktifHalaman > 1): ?>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?page=<?= $aktifHalaman - 1 ?>"
+                                                        aria-label="Previous">
+                                                        <span aria-hidden="true">&laquo;</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+
+                                            <?php for ($i = 1; $i <= $halaman; $i++): ?>
+                                                <?php if ($i == $aktifHalaman): ?>
+                                                    <li class="page-item active"><a class="page-link" href="?page=<?= $i; ?>">
+                                                            <?= $i; ?>
+                                                        </a></li>
+                                                <?php else: ?>
+                                                    <li class="page-item"><a class="page-link" href="?page=<?= $i; ?>">
+                                                            <?= $i; ?>
+                                                        </a></li>
+                                                <?php endif; ?>
+                                            <?php endfor; ?>
+
+                                            <?php if ($aktifHalaman < $halaman): ?>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?page=<?= $aktifHalaman + 1 ?>"
+                                                        aria-label="Next">
+                                                        <span aria-hidden="true">&raquo;</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+
+                                        </ul>
+                                    </nav>
+                                </div>
+                                <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
                         </div>
-                    </form>
-
-
-                    <!-- /.row -->
+                    </div>
+                    <!-- End -->
                 </div>
                 <!--/. container-fluid -->
             </section>

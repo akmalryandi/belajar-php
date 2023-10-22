@@ -81,7 +81,10 @@ if (isset($_POST['cari'])) {
                     <a href="../pos-shop/produk.php" class="nav-link active">Product</a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="#" class="nav-link">Category</a>
+                    <a href="../pos-shop/customers.php" class="nav-link">Customers</a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="../pos-shop/vendor.php" class="nav-link">Vendors</a>
                 </li>
             </ul>
 
@@ -188,99 +191,112 @@ if (isset($_POST['cari'])) {
             <section class="content">
                 <div class="container-fluid">
                     <!-- ISI PRODUK -->
-                    <div class="container">
-                        <form action="produk.php" method="post">
-                            <div class="d-flex bd-highlight">
-                                <div class="me-auto p-1 bd-highlight">
-                                    <a href="tambahproduk.php" type="button" class="btn btn-outline-light"><i
-                                            class="bi bi-plus-lg"></i></a>
-                                </div>
-                                <div class="p-1 bd-highlight">
-                                    <input type="text" class="form-control" id="search" name="nyari"
-                                        placeholder="Search" autocomplete="off">
-                                </div>
-                                <div class="p-1 bd-highlight">
-                                    <button type="submit" name="cari" class="btn btn-secondary"><i
-                                            class="bi bi-search"></i></button>
-                                </div>
-                            </div>
-                        </form>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <form action="produk.php" method="post">
+                                    <div class="card-header">
+                                        <a href="tambahproduk.php" type="button" class="btn btn-outline-light"><i
+                                                class="bi bi-plus-lg"></i></a>
+                                        <div class="card-tools">
+                                            <div class="input-group input-group-sm" style="width: 150px;">
+                                                <input type="text" name="nyari" class="form-control float-right"
+                                                    placeholder="Search" autocomplete="off">
 
-                        <div class="table-responsive-sm row p-3">
-                            <table class="table table-respon2">
-                                <thead>
-                                    <tr class="text-center">
-                                        <th scope="col">Picture</th>
-                                        <th scope="col">Nama</th>
-                                        <th scope="col">Deskripsi</th>
-                                        <th scope="col">Harga</th>
-                                        <th scope="col">Stok</th>
-                                        <th scope="col">Kode Produk</th>
-                                        <th scope="col">Kategori</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                    if (!$read) {
-                                        echo "Gagal Tampil" . mysqli_error($con);
-                                        die;
-                                    } else {
-                                        while ($data = mysqli_fetch_array($read)) {
-                                            echo '<tr class="text-center">';
-                                            echo '<td><img class="rounded" alt="' . $data['image'] . '" src="../assets/images/pos-shop/' . $data['image'] . '" width="100"></td>';
-                                            echo '<td>' . $data['product_name'] . '</td>';
-                                            echo '<td>' . $data['description'] . '</td>';
-                                            echo '<td>' . $data['price'] . '</td>';
-                                            echo '<td>' . $data['stock'] . '</td>';
-                                            echo '<td>' . $data['product_code'] . '</td>';
-                                            echo '<td>' . $data['category_name'] . '</td>';
-                                            echo '<td><a href="editproduk.php?updateid=' . $data['id'] . '">
+                                                <div class="input-group-append">
+                                                    <button type="submit" name="cari" class="btn btn-default">
+                                                        <i class="fas fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </form>
+                                <!-- /.card-header -->
+                                <div class="card-body table-responsive p-0">
+                                    <table class="table table-hover text-nowrap">
+                                        <thead>
+                                            <tr class="text-center">
+                                                <th scope="col">Picture</th>
+                                                <th scope="col">Nama</th>
+                                                <th scope="col">Deskripsi</th>
+                                                <th scope="col">Harga</th>
+                                                <th scope="col">Stok</th>
+                                                <th scope="col">Kode Produk</th>
+                                                <th scope="col">Kategori</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            if (!$read) {
+                                                echo "Gagal Tampil" . mysqli_error($con);
+                                                die;
+                                            } else {
+                                                while ($data = mysqli_fetch_array($read)) {
+                                                    echo '<tr class="text-center">';
+                                                    echo '<td><img class="rounded" alt="' . $data['image'] . '" src="../assets/images/pos-shop/' . $data['image'] . '" width="100"></td>';
+                                                    echo '<td>' . $data['product_name'] . '</td>';
+                                                    echo '<td>' . $data['description'] . '</td>';
+                                                    echo '<td>' . $data['price'] . '</td>';
+                                                    echo '<td>' . $data['stock'] . '</td>';
+                                                    echo '<td>' . $data['product_code'] . '</td>';
+                                                    echo '<td>' . $data['category_name'] . '</td>';
+                                                    echo '<td><a href="editproduk.php?updateid=' . $data['id'] . '">
                                 <button class="btn btn-outline-light m-2"><i class="bi bi-pencil-square"></i></button></a>
 
                                 <a href="deleteproduk.php?deleteid=' . $data['id'] . '">
                                 <button class="btn btn-outline-danger" onclick="return confirm(\'Apakah Anda yakin ingin menghapus data ini?\')"><i class="bi bi-trash3-fill"></i></button></a></td>';
-                                            echo '</tr>';
-                                        }
-                                    }
-                                    ?>
-                                </tbody>
-                            </table>
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-end">
-                                    <?php if ($aktifHalaman > 1): ?>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page=<?= $aktifHalaman - 1 ?>"
-                                                aria-label="Previous">
-                                                <span aria-hidden="true">&laquo;</span>
-                                            </a>
-                                        </li>
-                                    <?php endif; ?>
+                                                    echo '</tr>';
+                                                }
+                                            }
+                                            ?>
+                                        </tbody>
+                                    </table>
+                                    
+                                    <!-- Pagination -->
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="p-2 pagination justify-content-end">
+                                            <?php if ($aktifHalaman > 1): ?>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?page=<?= $aktifHalaman - 1 ?>"
+                                                        aria-label="Previous">
+                                                        <span aria-hidden="true">&laquo;</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
 
-                                    <?php for ($i = 1; $i <= $halaman; $i++): ?>
-                                        <?php if ($i == $aktifHalaman): ?>
-                                            <li class="page-item active"><a class="page-link" href="?page=<?= $i; ?>">
-                                                    <?= $i; ?>
-                                                </a></li>
-                                        <?php else: ?>
-                                            <li class="page-item"><a class="page-link" href="?page=<?= $i; ?>">
-                                                    <?= $i; ?>
-                                                </a></li>
-                                        <?php endif; ?>
-                                    <?php endfor; ?>
+                                            <?php for ($i = 1; $i <= $halaman; $i++): ?>
+                                                <?php if ($i == $aktifHalaman): ?>
+                                                    <li class="page-item active"><a class="page-link" href="?page=<?= $i; ?>">
+                                                            <?= $i; ?>
+                                                        </a></li>
+                                                <?php else: ?>
+                                                    <li class="page-item"><a class="page-link" href="?page=<?= $i; ?>">
+                                                            <?= $i; ?>
+                                                        </a></li>
+                                                <?php endif; ?>
+                                            <?php endfor; ?>
 
-                                    <?php if ($aktifHalaman < $halaman): ?>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page=<?= $aktifHalaman + 1 ?>" aria-label="Next">
-                                                <span aria-hidden="true">&raquo;</span>
-                                            </a>
-                                        </li>
-                                    <?php endif; ?>
-                                </ul>
-                            </nav>
+                                            <?php if ($aktifHalaman < $halaman): ?>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?page=<?= $aktifHalaman + 1 ?>"
+                                                        aria-label="Next">
+                                                        <span aria-hidden="true">&raquo;</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+
+                                        </ul>
+                                    </nav>
+                                </div>
+                                <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
                         </div>
                     </div>
-                    <!-- /.row -->
+                    <!-- End -->
                 </div>
                 <!--/. container-fluid -->
             </section>
