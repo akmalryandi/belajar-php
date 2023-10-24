@@ -1,3 +1,33 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['username'])) {
+    header('Location: login.php');
+    exit();
+}
+
+
+include("db/connect.php");
+
+//Product
+$query1 = "SELECT COUNT(*) as totalProduk FROM products";
+$produk = mysqli_query($con, $query1);
+$row1 = mysqli_fetch_assoc($produk);
+$totalProduk = $row1['totalProduk'];
+
+$query2 = "SELECT COUNT(*) as totalCustomers FROM customers";
+$customers = mysqli_query($con, $query2);
+$row2 = mysqli_fetch_assoc($customers);
+$totalCustomers = $row2['totalCustomers'];
+
+$query3 = "SELECT COUNT(*) as totalVendors FROM vendors";
+$vendors = mysqli_query($con, $query3);
+$row3 = mysqli_fetch_assoc($vendors);
+$totalVendors = $row3['totalVendors'];
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -149,7 +179,7 @@
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>150</h3>
+              <h3><?php echo $totalProduk?></h3>
 
                 <p>Products</p>
               </div>
@@ -164,7 +194,7 @@
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-              <h3>150</h3>
+              <h3><?php echo $totalCustomers?></h3>
 
                 <p>Customers</p>
               </div>
@@ -179,7 +209,7 @@
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>44</h3>
+              <h3><?php echo $totalVendors?></h3>
 
                 <p>Vendor</p>
               </div>

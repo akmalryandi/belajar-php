@@ -1,19 +1,24 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['username'])) {
+    header('Location: ../login.php');
+    exit();
+}
+
 include("../db/connect.php");
 
 
 // Pagination
 $dataHalaman = 3;
-$data = mysqli_num_rows(mysqli_query($con, "SELECT * FROM products"));
+$data = mysqli_num_rows(mysqli_query($con, "SELECT * FROM product_view"));
 $halaman = ceil($data / $dataHalaman);
 $aktifHalaman = (isset($_GET['page'])) ? $_GET['page'] : 1;
 $awalData = ($dataHalaman * $aktifHalaman) - $dataHalaman;
 
 
-$sql = "SELECT p.id, p.image, p.product_name, p.description, p.price, p.stock, p.product_code, c.category_name 
-        FROM products p
-        JOIN product_categories c ON p.category_id = c.id
-        ORDER BY p.id ASC
+$sql = "SELECT * FROM product_view
+         ORDER BY id ASC
         LIMIT $awalData, $dataHalaman";
 $read = mysqli_query($con, $sql);
 
@@ -22,14 +27,12 @@ $read = mysqli_query($con, $sql);
 if (isset($_POST['cari'])) {
     $cari = $_POST['nyari'];
 
-    $sql = "SELECT p.id, p.image, p.product_name, p.description, p.price, p.stock, p.product_code, c.category_name 
-            FROM products p
-            JOIN product_categories c ON p.category_id = c.id 
+    $sql = "SELECT * FROM product_view
             where 
-            p.product_name like '%$cari%' or
-            p.description like '%$cari%' or
-            c.category_name like '%$cari%'
-            ORDER BY p.id ASC
+            product_name like '%$cari%' or
+            description like '%$cari%' or
+            category_name like '%$cari%'
+            ORDER BY id ASC
             LIMIT $awalData, $dataHalaman";
     $read = mysqli_query($con, $sql);
 }

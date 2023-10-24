@@ -1,3 +1,30 @@
+<?php
+session_start();
+
+$userAkun = 'akmal';
+$passAkun = '123';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $userInput = $_POST['username'];
+    $passInput = $_POST['password'];
+
+    if ($userAkun === $userInput && $passAkun === $passInput) {
+        $_SESSION['username'] = $userInput;
+        header('Location: dashboard.php');
+        exit();
+    } else {
+        $error = "Username atau Password salah !";
+        header('Location: login.php');
+    }
+}
+
+if (isset($_SESSION['username'])) {
+    header('Location: dashboard.php');
+    exit();
+}
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,9 +55,9 @@
         <p class="login-box-msg">Silahkan Login untuk melanjutkan</p>
 
 
-        <form action="proses-login.php" method="post">
+        <form action="login.php" method="post">
           <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Username" name="username">
+            <input type="text" class="form-control" placeholder="Username" name="username" autocomplete="off">
             <div class="input-group-append">
               <div class="input-group-text">
                 <span class="fas fa-envelope"></span>
