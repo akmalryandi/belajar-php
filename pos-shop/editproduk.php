@@ -7,6 +7,7 @@ if (!isset($_SESSION['username'])) {
 }
 
 include("../db/connect.php");
+include("../tanggal-waktu/waktu.php");
 
 $id = $_GET['updateid'];
 if (isset($_POST['submit'])) {
@@ -15,25 +16,39 @@ if (isset($_POST['submit'])) {
     $result2 = mysqli_query($con, $sql2);
     $data = mysqli_fetch_assoc($result2);
 
-    if ($_FILES['gambar']['name'] != "") {
-        $gambar = $_FILES['gambar']['name'];
-        unlink("../assets/images/pos-shop/" . $data['image']);
-        move_uploaded_file($_FILES['gambar']['tmp_name'], "../assets/images/pos-shop/" . $gambar);
-    } else {
-        $gambar = $data['image'];
-    }
-
-
     $nama_produk = $_POST['nama'];
     $deskripsi_produk = $_POST['deskripsi'];
     $harga = $_POST['harga'];
     $stok = $_POST['stok'];
     $kode_produk = $_POST['kode_produk'];
     $kategori = $_POST['category_id'];
+    $editGambar = [];
+    $direktori = "../assets/images/pos-shop/";
+    
+    if (!empty($_FILES['gambar']['name'][0])) {
+        $totalGambar = count($_FILES['gambar']['name']);
+        for ($i = 0; $i < $totalGambar; $i++) {
+            $editNamaGambar = $_FILES['gambar']['name'][$i];
+            $file_tmp = $_FILES['gambar']['tmp_name'][$i];
+            $path = $direktori . $editNamaGambar;
 
-    $sql = "UPDATE products SET image='$gambar', product_name='$nama_produk', description='$deskripsi_produk', price='$harga', 
+            if (move_uploaded_file($file_tmp, $path)) {
+                $editGambar[] = $editNamaGambar;
+            }
+        }
+    }
+
+    if (!empty($editGambar)) {
+        $editGambar_json = json_encode($editGambar);
+        $sql = "UPDATE products SET image='$editGambar_json', product_name='$nama_produk', description='$deskripsi_produk', price='$harga', 
+        stock='$stok', product_code='$kode_produk', category_id='$kategori'
+        where id=$id";
+    } else {
+        $sql = "UPDATE products SET product_name='$nama_produk', description='$deskripsi_produk', price='$harga', 
                     stock='$stok', product_code='$kode_produk', category_id='$kategori'
                     where id=$id";
+    }
+
     $result = mysqli_query($con, $sql);
 
     if (!$result) {
@@ -100,12 +115,20 @@ $hasil_kategori = mysqli_query($con, $sql_kategori);
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
-                <li class="nav-item d-none d-sm-inline-block">
+                <li class="nav-item mt-2">
+                    <p class="text-center">
+                        <?php echo $tanggal_waktu; ?>
+                    </p>
+                </li>
+                <!-- <li class="nav-item d-none d-sm-inline-block">
                     <a href="../pos-shop/produk.php" class="nav-link active">Product</a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="#" class="nav-link">Category</a>
+                    <a href="../pos-shop/customers.php" class="nav-link">Customers</a>
                 </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="../pos-shop/vendor.php" class="nav-link">Vendors</a>
+                </li> -->
             </ul>
 
             <!-- Right navbar links -->
@@ -251,7 +274,8 @@ $hasil_kategori = mysqli_query($con, $sql_kategori);
                         </div>
                         <div class="col-md-12 mb-3">
                             <label for="gambar">Pilih gambar</label>
-                            <input type="file" class="form-control" name="gambar" id="gambar" accept="image/*">
+                            <input type="file" class="form-control" name="gambar[]" id="gambar" accept="image/*"
+                                multiple>
                         </div>
                         <div class="col-12">
                             <button type="submit" name="submit" class="btn btn-dark">Edit</button>

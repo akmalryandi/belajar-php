@@ -7,12 +7,22 @@ if (!isset($_SESSION['username'])) {
 }
 
 include("../db/connect.php");
+include("../tanggal-waktu/waktu.php");
 if (isset($_POST['submit'])) {
 
+    //Proses Gambar Multiple
     $direktori = "../assets/images/pos-shop/";
     $gambar = $_FILES['gambar']['name'];
-    move_uploaded_file($_FILES['gambar']['tmp_name'], $direktori . $gambar);
+    $tmp_gambar = $_FILES['gambar']['tmp_name'];
+    move_uploaded_file($tmp_gambar[0], $direktori . $gambar[0]);
+    $arrayGambar = array($gambar[0]);
 
+    for ($i=1; $i < count($gambar); $i++) { 
+        move_uploaded_file($tmp_gambar[$i], $direktori . $gambar[$i]);
+        $arrayGambar[] = $gambar[$i];
+    }
+    
+    $jsonGambar = json_encode($arrayGambar);
     $nama_produk = $_POST['nama'];
     $deskripsi_produk = $_POST['deskripsi'];
     $harga = $_POST['harga'];
@@ -32,7 +42,7 @@ if (isset($_POST['submit'])) {
         } else {
             // Lakukan operasi penambahan data ke dalam database
             $sql = "INSERT INTO products(image, product_name, description, price, stock, product_code, category_id) 
-                VALUES('$gambar','$nama_produk','$deskripsi_produk','$harga','$stok','$kode_produk','$kategori')";
+                VALUES('$jsonGambar','$nama_produk','$deskripsi_produk','$harga','$stok','$kode_produk','$kategori')";
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
@@ -95,12 +105,20 @@ $categories_result = mysqli_query($con, $sql_categories);
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
-                <li class="nav-item d-none d-sm-inline-block">
+                <li class="nav-item mt-2">
+                    <p class="text-center">
+                        <?php echo $tanggal_waktu; ?>
+                    </p>
+                </li>
+                <!-- <li class="nav-item d-none d-sm-inline-block">
                     <a href="../pos-shop/produk.php" class="nav-link active">Product</a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="#" class="nav-link">Category</a>
+                    <a href="../pos-shop/customers.php" class="nav-link">Customers</a>
                 </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="../pos-shop/vendor.php" class="nav-link">Vendors</a>
+                </li> -->
             </ul>
 
             <!-- Right navbar links -->
@@ -241,8 +259,8 @@ $categories_result = mysqli_query($con, $sql_categories);
                         </div>
                         <div class="col-md-12 mb-3">
                             <label for="gambar">Pilih gambar</label>
-                            <input type="file" required class="form-control" name="gambar" id="gambar" accept="image/*"
-                                Required>
+                            <input type="file" required class="form-control" name="gambar[]" id="gambar" accept="image/*"
+                                multiple>
                         </div>
                         <div class="col-12">
                             <button type="submit" name="submit" class="btn btn-dark">Tambah</button>

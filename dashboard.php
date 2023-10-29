@@ -2,12 +2,13 @@
 session_start();
 
 if (!isset($_SESSION['username'])) {
-    header('Location: login.php');
-    exit();
+  header('Location: login.php');
+  exit();
 }
 
 
 include("db/connect.php");
+include("tanggal-waktu/waktu.php");
 
 //Product
 $query1 = "SELECT COUNT(*) as totalProduk FROM products";
@@ -42,6 +43,8 @@ $totalVendors = $row3['totalVendors'];
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback" />
   <!-- My CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link rel="stylesheet" href="assets/css/produk.css" />
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css" />
@@ -65,12 +68,16 @@ $totalVendors = $row3['totalVendors'];
         <li class="nav-item">
           <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
-        <li class="nav-item d-none d-sm-inline-block">
+        <li class="nav-item mt-2">
+          <p class="text-center"><?php echo $tanggal_waktu; ?></p>
+        </li>
+       
+        <!-- <li class="nav-item d-none d-sm-inline-block">
           <a href="dashboard.html" class="nav-link active">Home</a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
           <a href="logout.php" class="nav-link">Logout</a>
-        </li>
+        </li> -->
       </ul>
 
       <!-- Right navbar links -->
@@ -173,54 +180,63 @@ $totalVendors = $row3['totalVendors'];
       <!-- Main content -->
       <section class="content">
         <div class="container-fluid">
-        <!-- Small boxes (Stat box) -->
-        <div class="row">
-          <div class="col-lg-4 col-6">
-            <!-- small box -->
-            <div class="small-box bg-info">
-              <div class="inner">
-              <h3><?php echo $totalProduk?></h3>
+          <!-- Small boxes (Stat box) -->
+          <div class="row">
+            <div class="col-lg-4 col-6">
+              <!-- small box -->
+              <div class="small-box bg-info">
+                <div class="inner">
+                  <h3>
+                    <?php echo $totalProduk ?>
+                  </h3>
 
-                <p>Products</p>
+                  <p>Products</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-bag"></i>
+                </div>
+                <a href="pos-shop/produk.php" class="small-box-footer">More info <i
+                    class="fas fa-arrow-circle-right"></i></a>
               </div>
-              <div class="icon">
-                <i class="ion ion-bag"></i>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-4 col-6">
+              <!-- small box -->
+              <div class="small-box bg-success">
+                <div class="inner">
+                  <h3>
+                    <?php echo $totalCustomers ?>
+                  </h3>
+
+                  <p>Customers</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-stats-bars"></i>
+                </div>
+                <a href="pos-shop/customers.php" class="small-box-footer">More info <i
+                    class="fas fa-arrow-circle-right"></i></a>
               </div>
-              <a href="pos-shop/produk.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-4 col-6">
+              <!-- small box -->
+              <div class="small-box bg-warning">
+                <div class="inner">
+                  <h3>
+                    <?php echo $totalVendors ?>
+                  </h3>
+
+                  <p>Vendor</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-person-add"></i>
+                </div>
+                <a href="pos-shop/vendor.php" class="small-box-footer">More info <i
+                    class="fas fa-arrow-circle-right"></i></a>
+              </div>
             </div>
           </div>
-          <!-- ./col -->
-          <div class="col-lg-4 col-6">
-            <!-- small box -->
-            <div class="small-box bg-success">
-              <div class="inner">
-              <h3><?php echo $totalCustomers?></h3>
-
-                <p>Customers</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-stats-bars"></i>
-              </div>
-              <a href="pos-shop/customers.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-4 col-6">
-            <!-- small box -->
-            <div class="small-box bg-warning">
-              <div class="inner">
-              <h3><?php echo $totalVendors?></h3>
-
-                <p>Vendor</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-person-add"></i>
-              </div>
-              <a href="pos-shop/vendor.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-        </div>
-        <!-- /.row -->
+          <!-- /.row -->
           <!-- /.row -->
         </div>
         <!--/. container-fluid -->

@@ -7,6 +7,7 @@ if (!isset($_SESSION['username'])) {
 }
 
 include("../db/connect.php");
+include("../tanggal-waktu/waktu.php");
 
 
 // Pagination
@@ -18,7 +19,7 @@ $awalData = ($dataHalaman * $aktifHalaman) - $dataHalaman;
 
 
 $sql = "SELECT * FROM product_view
-         ORDER BY id ASC
+         ORDER BY id DESC
         LIMIT $awalData, $dataHalaman";
 $read = mysqli_query($con, $sql);
 
@@ -36,6 +37,7 @@ if (isset($_POST['cari'])) {
             LIMIT $awalData, $dataHalaman";
     $read = mysqli_query($con, $sql);
 }
+
 ?>
 
 
@@ -80,7 +82,12 @@ if (isset($_POST['cari'])) {
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
-                <li class="nav-item d-none d-sm-inline-block">
+                <li class="nav-item mt-2">
+                    <p class="text-center">
+                        <?php echo $tanggal_waktu; ?>
+                    </p>
+                </li>
+                <!-- <li class="nav-item d-none d-sm-inline-block">
                     <a href="../pos-shop/produk.php" class="nav-link active">Product</a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
@@ -88,7 +95,7 @@ if (isset($_POST['cari'])) {
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="../pos-shop/vendor.php" class="nav-link">Vendors</a>
-                </li>
+                </li> -->
             </ul>
 
             <!-- Right navbar links -->
@@ -239,7 +246,18 @@ if (isset($_POST['cari'])) {
                                             } else {
                                                 while ($data = mysqli_fetch_array($read)) {
                                                     echo '<tr class="text-center">';
-                                                    echo '<td><img class="rounded" alt="' . $data['image'] . '" src="../assets/images/pos-shop/' . $data['image'] . '" width="100"></td>';
+                                                    echo '<td>';
+                                                    $arrayGambar = json_decode($data["image"], true);
+                                                    if (!empty($arrayGambar)) {
+                                                        foreach ($arrayGambar as $gambar) {
+                                                            echo '<img class="rounded mb-2" alt="' . $gambar . '" src="../assets/images/pos-shop/' . $gambar . '" width="100"><br>';
+                                                        }
+                                                    } elseif (empty($arrayGambar)) {
+                                                        echo '<img class="rounded" alt="' . $data['image'] . '" src="../assets/images/pos-shop/' . $data['image'] . '" width="100">';
+                                                    } else {
+                                                        echo 'Kosong';
+                                                    }
+                                                    echo '</td>';
                                                     echo '<td>' . $data['product_name'] . '</td>';
                                                     echo '<td>' . $data['description'] . '</td>';
                                                     echo '<td>' . $data['price'] . '</td>';
@@ -257,7 +275,7 @@ if (isset($_POST['cari'])) {
                                             ?>
                                         </tbody>
                                     </table>
-                                    
+
                                     <!-- Pagination -->
                                     <nav aria-label="Page navigation example">
                                         <ul class="p-2 pagination justify-content-end">
