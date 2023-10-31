@@ -1,27 +1,34 @@
 <?php
+include("db/connect.php");
 session_start();
+if (isset($_SESSION['login'])) {
+  header('Location: dashboard.php');
+  exit();
+}
 
-$userAkun = 'akmal';
-$passAkun = '123';
+if( isset($_POST["submit"]) ){
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $userInput = $_POST['username'];
-    $passInput = $_POST['password'];
+  $username = $_POST["username"];
+  $password = $_POST["password"];
 
-    if ($userAkun === $userInput && $passAkun === $passInput) {
-        $_SESSION['username'] = $userInput;
-        header('Location: dashboard.php');
-        exit();
-    } else {
-        $error = "Username atau Password salah !";
-        header('Location: login.php');
+  $result = mysqli_query($con, "SELECT * FROM users where username = '$username'");
+
+  //cek username
+  if(mysqli_num_rows($result) === 1 ){
+
+    //cek password
+    $row = mysqli_fetch_assoc($result);
+    if(password_verify($password, $row["password"]) ){
+      $_SESSION['login'] = $username;
+      echo '<script>alert("Login berhasil"); window.location.href = "dashboard.php";</script>';
+      exit;
     }
+  }
+
+  $error = true;
 }
 
-if (isset($_SESSION['username'])) {
-    header('Location: dashboard.php');
-    exit();
-}
+
 
 
 ?>
@@ -36,6 +43,8 @@ if (isset($_SESSION['username'])) {
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Icon -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
   <!-- icheck bootstrap -->
@@ -55,12 +64,12 @@ if (isset($_SESSION['username'])) {
         <p class="login-box-msg">Silahkan Login untuk melanjutkan</p>
 
 
-        <form action="login.php" method="post">
+        <form action="" method="post">
           <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Username" name="username" autocomplete="off">
+            <input type="number" class="form-control" placeholder="Username" name="username" autocomplete="off">
             <div class="input-group-append">
               <div class="input-group-text">
-                <span class="fas fa-envelope"></span>
+                <i class="bi bi-telephone-fill"></i>
               </div>
             </div>
           </div>
@@ -72,7 +81,10 @@ if (isset($_SESSION['username'])) {
               </div>
             </div>
           </div>
-
+          
+          <?php if(isset($error)) : ?>
+            <p class="login-box-msg" style="color:red">Username dan Password Tidak Sesuai !!!</p>
+          <?php endif; ?>
 
           <div class="row">
             <div class="col-8">
@@ -85,7 +97,7 @@ if (isset($_SESSION['username'])) {
             </div>
             <!-- /.col -->
             <div class="col-4">
-              <button type="submit" class="btn btn-primary btn-block">Login</button>
+              <button type="submit" name="submit" class="btn btn-primary btn-block">Login</button>
             </div>
             <!-- /.col -->
           </div>
@@ -95,7 +107,7 @@ if (isset($_SESSION['username'])) {
           <a href="#">Lupa Password</a>
         </p>
         <p class="mb-0">
-          <a href="#" class="text-center">Register</a>
+          <a href="register.php" class="text-center">Register</a>
         </p>
       </div>
       <!-- /.login-card-body -->

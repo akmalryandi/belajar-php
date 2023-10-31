@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['login'])) {
     header('Location: ../login.php');
     exit();
 }
@@ -19,7 +19,7 @@ $awalData = ($dataHalaman * $aktifHalaman) - $dataHalaman;
 
 
 $sql = "SELECT * FROM product_view
-         ORDER BY id DESC
+         ORDER BY id ASC
         LIMIT $awalData, $dataHalaman";
 $read = mysqli_query($con, $sql);
 
@@ -102,25 +102,9 @@ if (isset($_POST['cari'])) {
             <ul class="navbar-nav ml-auto">
                 <!-- Navbar Search -->
                 <li class="nav-item">
-                    <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                        <i class="fas fa-search"></i>
-                    </a>
-                    <div class="navbar-search-block">
-                        <form class="form-inline">
-                            <div class="input-group input-group-sm">
-                                <input class="form-control form-control-navbar" type="search" placeholder="Search"
-                                    aria-label="Search" />
-                                <div class="input-group-append">
-                                    <button class="btn btn-navbar" type="submit">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                    <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="../logout.php" class="nav-link">Logout</a>
+                </li>
                 </li>
             </ul>
         </nav>
