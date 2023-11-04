@@ -1,6 +1,9 @@
 <?php
-include("db/connect.php");
+require("db/connect.php");
+require('userOOP.php');
 session_start();
+
+
 if (isset($_SESSION['login'])) {
   header('Location: dashboard.php');
   exit();
@@ -10,27 +13,12 @@ if (isset($_POST["register"])) {
   $name = strtolower(stripslashes($_POST["name"]));
   $email = $_POST["email"];
   $noHp = $_POST["noHp"];
-  $password = mysqli_real_escape_string($con, $_POST["pass"]);
-  $password2 = mysqli_real_escape_string($con, $_POST["konfirPass"]);
+  $password = $db->escapeString($_POST["pass"]);
+  $password2 = $db->escapeString($_POST["konfirPass"]);
   $groupID = 3;
 
-  $sqlUser = "SELECT username FROM users WHERE username='$noHp'";
-  $resultUser = mysqli_query($con, $sqlUser);
-  if ($resultUser->num_rows > 0) {
-    // Username sudah terdaftar
-    echo "<script>alert('Username sudah terdaftar');</script>";
-  } elseif ($password !== $password2) {
-    // Password dan konfirmasi password tidak sesuai
-    echo "<script>alert('Password dan konfirmasi password tidak sesuai');</script>";
-  } else {
-    $password = password_hash($password, PASSWORD_DEFAULT);
-    $sql = "INSERT INTO users (name, email, phone_number, username, password, group_id) VALUES ('$name', '$email', '$noHp', '$noHp', '$password', '$groupID')";
-    if ($con->query($sql) === TRUE) {
-      echo '<script>alert("Registrasi berhasil"); window.location.href = "login.php";</script>';
-    } else {
-      die(mysqli_error($con));
-    }
-  }
+  $registration = new User($db);
+  $registration->registerUser($name, $email, $noHp, $password, $password2, $groupID);
 }
 
 ?>

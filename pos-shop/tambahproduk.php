@@ -7,59 +7,17 @@ if (!isset($_SESSION['login'])) {
 }
 
 include("../db/connect.php");
+require('crud-oop.php');
 include("../tanggal-waktu/waktu.php");
-if (isset($_POST['submit'])) {
 
-    //Proses Gambar Multiple
-    $direktori = "../assets/images/pos-shop/";
-    $gambar = $_FILES['gambar']['name'];
-    $tmp_gambar = $_FILES['gambar']['tmp_name'];
-    move_uploaded_file($tmp_gambar[0], $direktori . $gambar[0]);
-    $arrayGambar = array($gambar[0]);
+//OBJECT
+$tambahData = new Product($db);
 
-    for ($i=1; $i < count($gambar); $i++) { 
-        move_uploaded_file($tmp_gambar[$i], $direktori . $gambar[$i]);
-        $arrayGambar[] = $gambar[$i];
-    }
-    
-    $jsonGambar = json_encode($arrayGambar);
-    $nama_produk = $_POST['nama'];
-    $deskripsi_produk = $_POST['deskripsi'];
-    $harga = $_POST['harga'];
-    $stok = $_POST['stok'];
-    $kode_produk = $_POST['kode_produk'];
-    $kategori = $_POST['kategori'];
-
-    if (empty($kode_produk)) {
-        echo "Kode produk tidak boleh kosong.";
-    } else {
-        // Periksa apakah kode produk sudah ada dalam database
-        $query = "SELECT id FROM products WHERE product_code = '$kode_produk'";
-        $resultk = mysqli_query($con, $query);
-
-        if (mysqli_num_rows($resultk) > 0) {
-            $error_message = "Kode produk sudah ada.";
-        } else {
-            // Lakukan operasi penambahan data ke dalam database
-            $sql = "INSERT INTO products(image, product_name, description, price, stock, product_code, category_id) 
-                VALUES('$jsonGambar','$nama_produk','$deskripsi_produk','$harga','$stok','$kode_produk','$kategori')";
-            $result = mysqli_query($con, $sql);
-
-            if (!$result) {
-                die(mysqli_error($con));
-            } else {
-                header('location:produk.php');
-            }
-        }
-    }
-    // Tampilkan pesan Error pada Kode Produk
-    if (isset($error_message)) {
-        echo "<script>alert('$error_message');</script>";
-    }
-}
+//OOP Tambah Data
+$tambahData->createProducts();
 
 $sql_categories = "SELECT * FROM product_categories";
-$categories_result = mysqli_query($con, $sql_categories);
+$categories_result = $db->query($sql_categories);
 ?>
 
 

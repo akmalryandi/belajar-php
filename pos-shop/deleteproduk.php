@@ -1,21 +1,10 @@
 <?php
-    include('../db/connect.php');
-    if (isset($_GET['deleteid'])) {
-        $id = $_GET['deleteid'];
+include("../db/connect.php");
+require('crud-oop.php');
 
-        $sql2 = "SELECT * FROM products WHERE id=$id";
-        $result2 = mysqli_query($con,$sql2);
-        $data = mysqli_fetch_assoc($result2);
+//OBJECT
+$hapusData = new Product($db);
 
-        unlink("../assets/images/pos-shop/".$data['image']);
-
-        $sql = "DELETE FROM products where id=$id";
-        $result = mysqli_query($con,$sql);
-
-        if ($result) {
-            header("location:produk.php");
-        }else {
-            die(mysqli_error($con));
-        }
-    }
+//OOP Edit Data
+$hapusData->deleteProducts();
 ?>

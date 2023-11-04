@@ -7,68 +7,26 @@ if (!isset($_SESSION['login'])) {
 }
 
 include("../db/connect.php");
+require('crud-oop.php');
 include("../tanggal-waktu/waktu.php");
 
 $id = $_GET['updateid'];
-if (isset($_POST['submit'])) {
 
-    $sql2 = "SELECT * FROM products WHERE id=$id";
-    $result2 = mysqli_query($con, $sql2);
-    $data = mysqli_fetch_assoc($result2);
+//OBJECT
+$editData = new Product($db);
 
-    $nama_produk = $_POST['nama'];
-    $deskripsi_produk = $_POST['deskripsi'];
-    $harga = $_POST['harga'];
-    $stok = $_POST['stok'];
-    $kode_produk = $_POST['kode_produk'];
-    $kategori = $_POST['category_id'];
-    $editGambar = [];
-    $direktori = "../assets/images/pos-shop/";
-    
-    if (!empty($_FILES['gambar']['name'][0])) {
-        $totalGambar = count($_FILES['gambar']['name']);
-        for ($i = 0; $i < $totalGambar; $i++) {
-            $editNamaGambar = $_FILES['gambar']['name'][$i];
-            $file_tmp = $_FILES['gambar']['tmp_name'][$i];
-            $path = $direktori . $editNamaGambar;
-
-            if (move_uploaded_file($file_tmp, $path)) {
-                $editGambar[] = $editNamaGambar;
-            }
-        }
-    }
-
-    if (!empty($editGambar)) {
-        $editGambar_json = json_encode($editGambar);
-        $sql = "UPDATE products SET image='$editGambar_json', product_name='$nama_produk', description='$deskripsi_produk', price='$harga', 
-        stock='$stok', product_code='$kode_produk', category_id='$kategori'
-        where id=$id";
-    } else {
-        $sql = "UPDATE products SET product_name='$nama_produk', description='$deskripsi_produk', price='$harga', 
-                    stock='$stok', product_code='$kode_produk', category_id='$kategori'
-                    where id=$id";
-    }
-
-    $result = mysqli_query($con, $sql);
-
-    if (!$result) {
-        die(mysqli_error($con));
-    } else {
-        header('location:produk.php');
-    }
-
-}
-
+//OOP Edit Data
+$editData->updateProducts();
 
 $sqll = "SELECT p.id, p.image, p.product_name, p.description, p.price, p.stock, p.product_code, c.category_name
         FROM products p
         JOIN product_categories c ON p.category_id = c.id
         WHERE p.id=$id";
-$hasil = mysqli_query($con, $sqll);
+$hasil = $db->query($sqll);
 $baris = mysqli_fetch_assoc($hasil);
 
 $sql_kategori = "SELECT * FROM product_categories";
-$hasil_kategori = mysqli_query($con, $sql_kategori);
+$hasil_kategori = $db->query($sql_kategori);
 
 ?>
 

@@ -1,36 +1,27 @@
 <?php
 include("db/connect.php");
+require("userOOP.php");
 session_start();
+
+$auth = new user($db);
+
 if (isset($_SESSION['login'])) {
   header('Location: dashboard.php');
   exit();
 }
 
-if( isset($_POST["submit"]) ){
-
+if (isset($_POST["submit"])) {
   $username = $_POST["username"];
   $password = $_POST["password"];
 
-  $result = mysqli_query($con, "SELECT * FROM users where username = '$username'");
 
-  //cek username
-  if(mysqli_num_rows($result) === 1 ){
-
-    //cek password
-    $row = mysqli_fetch_assoc($result);
-    if(password_verify($password, $row["password"]) ){
-      $_SESSION['login'] = $username;
-      echo '<script>alert("Login berhasil"); window.location.href = "dashboard.php";</script>';
-      exit;
-    }
+  if ($auth->loginUser($username, $password)) {
+    echo '<script>alert("Login berhasil"); window.location.href = "dashboard.php";</script>';
+    exit;
+  } else {
+    $error = true;
   }
-
-  $error = true;
 }
-
-
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -81,8 +72,8 @@ if( isset($_POST["submit"]) ){
               </div>
             </div>
           </div>
-          
-          <?php if(isset($error)) : ?>
+
+          <?php if (isset($error)): ?>
             <p class="login-box-msg" style="color:red">Username dan Password Tidak Sesuai !!!</p>
           <?php endif; ?>
 

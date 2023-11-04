@@ -10,21 +10,26 @@ if (!isset($_SESSION['login'])) {
 include("db/connect.php");
 include("tanggal-waktu/waktu.php");
 
-//Product
-$query1 = "SELECT COUNT(*) as totalProduk FROM products";
-$produk = mysqli_query($con, $query1);
-$row1 = mysqli_fetch_assoc($produk);
-$totalProduk = $row1['totalProduk'];
+class RecordCounter {
+  private $db;
 
-$query2 = "SELECT COUNT(*) as totalCustomers FROM customers";
-$customers = mysqli_query($con, $query2);
-$row2 = mysqli_fetch_assoc($customers);
-$totalCustomers = $row2['totalCustomers'];
+  public function __construct($db) {
+      $this->db = $db;
+  }
 
-$query3 = "SELECT COUNT(*) as totalVendors FROM vendors";
-$vendors = mysqli_query($con, $query3);
-$row3 = mysqli_fetch_assoc($vendors);
-$totalVendors = $row3['totalVendors'];
+  public function countRecords($table) {
+      $query = "SELECT COUNT(*) as totalProduk FROM $table";
+      $result = $this->db->query($query);
+      $row = $result->fetch_assoc();
+      return $row['totalProduk'];
+  }
+}
+
+$recordCounter = new RecordCounter($db);
+
+$totalProduk = $recordCounter->countRecords("products");
+$totalCustomers = $recordCounter->countRecords("customers");
+$totalVendors = $recordCounter->countRecords("vendors");
 
 ?>
 

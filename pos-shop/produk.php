@@ -1,4 +1,8 @@
 <?php
+include("../db/connect.php");
+require('crud-oop.php');
+include("../tanggal-waktu/waktu.php");
+
 session_start();
 
 if (!isset($_SESSION['login'])) {
@@ -6,22 +10,24 @@ if (!isset($_SESSION['login'])) {
     exit();
 }
 
-include("../db/connect.php");
-include("../tanggal-waktu/waktu.php");
-
+//OBJECT
+$produk = new Product($db);
 
 // Pagination
 $dataHalaman = 3;
-$data = mysqli_num_rows(mysqli_query($con, "SELECT * FROM product_view"));
+
+//OOP Tampil data
+$result = $produk->readProducts();
+
+$data = $result->num_rows;
 $halaman = ceil($data / $dataHalaman);
 $aktifHalaman = (isset($_GET['page'])) ? $_GET['page'] : 1;
 $awalData = ($dataHalaman * $aktifHalaman) - $dataHalaman;
 
-
 $sql = "SELECT * FROM product_view
          ORDER BY id ASC
         LIMIT $awalData, $dataHalaman";
-$read = mysqli_query($con, $sql);
+$read = $db->query($sql);
 
 
 // FITUR SEARCH
@@ -35,8 +41,10 @@ if (isset($_POST['cari'])) {
             category_name like '%$cari%'
             ORDER BY id ASC
             LIMIT $awalData, $dataHalaman";
-    $read = mysqli_query($con, $sql);
+    $read = $db->query($sql);
 }
+
+
 
 ?>
 
